@@ -1,0 +1,26 @@
+# Public synthetic CI isolation harness — NOT NuvoMailo product source.
+name: Backend isolation verify
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  verify-backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.15.0'
+          cache: npm
+      - run: npm ci
+      - run: docker pull postgres:17
+      - run: npm test
+      - name: Upload sanitized isolated diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: isolated-backend-diagnostics-sanitized
+          path: tmp/isolated-tests/diagnostics-sanitized.txt
+          if-no-files-found: ignore
+          retention-days: 1

@@ -1,0 +1,4 @@
+node_modules/
+tmp/isolated-tests/*.log
+tmp/isolated-tests/diagnostics-sanitized.txt
+.DS_Store
